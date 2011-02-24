@@ -40,7 +40,7 @@ class BoidCanvas extends JComponent{
     }
     
     /**
-     * 
+     * Calculates the vectors for each boid.
      */
     public void getVectors(){
     	ArrayList<Boid> newBoids = new ArrayList<Boid>();
