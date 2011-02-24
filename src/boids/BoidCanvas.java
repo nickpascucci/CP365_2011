@@ -3,8 +3,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.swing.JComponent;
+/**
+ * Provides a drawing surface for the boid flock.
+ * @author Matthew Polk
+ * @author Nick Pascucci
+ */
 
-@SuppressWarnings("serial")
 class BoidCanvas extends JComponent{
 	final static int MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 100;
@@ -12,12 +16,19 @@ class BoidCanvas extends JComponent{
 	int WIDTH = 500;
 	int HEIGHT = 400;
     ArrayList<Boid> boids;
-
+    
+    
+    /**
+     * Creates a new BoidCanvas object with defaults.
+     */
     public BoidCanvas(){
     	boids = new ArrayList<Boid>();
     }
     
-    public ArrayList<Boid> get_nearby_boids(Boid b){
+    /**
+     * Searches the boids ArrayList for nearby boids to this one.
+     */
+    private ArrayList<Boid> get_nearby_boids(Boid b){
     	ArrayList<Boid> neighbors = new ArrayList<Boid>();
     	
     	for(Boid d: boids){
@@ -28,6 +39,9 @@ class BoidCanvas extends JComponent{
     	return neighbors;
     }
     
+    /**
+     * 
+     */
     public void getVectors(){
     	ArrayList<Boid> newBoids = new ArrayList<Boid>();
     	for(Boid b:boids){
