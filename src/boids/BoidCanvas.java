@@ -59,13 +59,10 @@ class BoidCanvas extends JComponent {
 			int[] cv = getCenterVector(newBoid);
 			int[] av = getAwayVector(newBoid);
 			int[] ms = getMatchSpeedVector(newBoid);
-
-			newBoid.movementVector[0] = 0;
-			newBoid.movementVector[1] = 0;
 			
 			// Combined vector is the sum of the contributing vectors.
-			newBoid.movementVector[0] += cv[0] + av[0] + ms[0];
-			newBoid.movementVector[1] += cv[1] + av[1] + ms[1];
+			newBoid.movementVector[0] = cv[0] + av[0] + ms[0];
+			newBoid.movementVector[1] = cv[1] + av[1] + ms[1];
 
 			/*
 			 * But, the vector may be very large. We should scale it down a bit.
