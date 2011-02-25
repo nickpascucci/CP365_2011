@@ -15,7 +15,7 @@ import javax.swing.JComponent;
 class BoidCanvas extends JComponent{
 	final static int MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 100;
-	int SIZE = 10;
+	int SIZE = 5;
 	int WIDTH = 500;
 	int HEIGHT = 400;
     ArrayList<Boid> boids;
@@ -67,6 +67,11 @@ class BoidCanvas extends JComponent{
     	boids = newBoids;
     }
     
+    /**
+     * Generates the vector to the center of the flock.
+     * @param boid The boid who is the origin of the vector.
+     * @return An int array representing the x,y unit vectors.
+     */
     public int[] getCenterVec(Boid boid){
     	int[] center = new int[2];
     	center[0] = 0;
@@ -86,6 +91,11 @@ class BoidCanvas extends JComponent{
     	return centerVec;
     }
     
+    /**
+     * Generates a boid-specific vector to avoid neighbors.
+     * @param b
+     * @return
+     */
     public int[] getAwayVec(Boid b){
     	int[] awayVec = new int[2];
     	
@@ -106,6 +116,11 @@ class BoidCanvas extends JComponent{
     	return awayVec;
     }
     
+    /**
+     * Generates a vector to match the speed of a boid's neighbors.
+     * @param b
+     * @return
+     */
     public int[] getMatchSpeedVec(Boid b){
     	int[] matchVec = new int[2];
     	ArrayList<Boid> Neighborhood = get_nearby_boids(b);
@@ -126,6 +141,11 @@ class BoidCanvas extends JComponent{
     	return matchVec;
     }
     
+    /**
+     * Runs the simulation.
+     * @param num_boids
+     * @throws InterruptedException
+     */
     public void run(int num_boids) throws InterruptedException{
     	Random rand = new Random();
     	for(int i = 0; i< num_boids; i++){
@@ -146,8 +166,12 @@ class BoidCanvas extends JComponent{
     	}
     }
     
+    /**
+     * Drawing code.
+     */
     public void paintComponent(Graphics g) {
-	for (Boid b : boids) {
+    	super.repaint();
+    	for (Boid b : boids) {
             b.draw(g);
         }
     }

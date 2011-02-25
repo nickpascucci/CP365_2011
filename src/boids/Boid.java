@@ -14,6 +14,12 @@ public class Boid {
 	int[] vec;
 	Color color;
 	
+	/**
+	 * Create a new boid at the give x,y coordinates.
+	 * @param _x
+	 * @param _y
+	 * @param _size
+	 */
 	public Boid(int _x, int _y, int _size){
 		x = _x;
 		y = _y;
@@ -23,6 +29,10 @@ public class Boid {
 		vec[1] = 1;
 	}
 	
+	/**
+	 * Renders the given boid.
+	 * @param g
+	 */
 	public void draw(Graphics g) {
         g.setColor(color);
         g.fillRect(x, y, size, size);
