@@ -17,14 +17,15 @@ import javax.swing.JComponent;
 @SuppressWarnings("serial")
 class BoidCanvas extends JComponent implements MouseMotionListener{
 	final static float MAX_SPEED = 10;
-	final static int NEIGHBOR_DISTANCE = 500;
+	final static int NEIGHBOR_DISTANCE = 100;
+	final static int RANDOMOSITY = 50;
+	final static int RANDOM_SPEED = 50;
 	int CENTER_WEIGHT = 6;
 	int AVOID_WEIGHT = 10;
 	int MATCH_SPEED_WEIGHT = 2;
 	int MOUSE_WEIGHT = 3;
 	int mouseX;
 	int mouseY;
-	final static int RANDOMOSITY = 50;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
 	Random rand = new Random();
@@ -81,8 +82,11 @@ class BoidCanvas extends JComponent implements MouseMotionListener{
 			 * Remember to scale uniformly!
 			 */
 			newBoid.movementVector = toUnitVector(newBoid.movementVector);
-			newBoid.movementVector[0] *= MAX_SPEED;
-			newBoid.movementVector[1] *= MAX_SPEED;
+			
+			int speedChange = rand.nextInt(RANDOM_SPEED) + 1 - (RANDOM_SPEED/2);
+			
+			newBoid.movementVector[0] *= MAX_SPEED + speedChange;
+			newBoid.movementVector[1] *= MAX_SPEED + speedChange;
 		}
 		boids = newBoids;
 	}
