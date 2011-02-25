@@ -57,11 +57,11 @@ class BoidCanvas extends JComponent {
 			int[] cv = getCenterVector(newBoid);
 			int[] av = getAwayVector(newBoid);
 			int[] ms = getMatchSpeedVector(newBoid);
-			
+			System.out.println("center "+cv[0]+" "+cv[1]+" avoid "+av[0]+" "+av[1]+" ms "+ms[0]+" "+ms[1]);
 			// Combined vector is the sum of the contributing vectors.
 			newBoid.movementVector[0] = cv[0] + av[0] + ms[0];
 			newBoid.movementVector[1] = cv[1] + av[1] + ms[1];
-
+			System.out.println("move "+newBoid.movementVector[0]+" "+newBoid.movementVector[1]);
 			/*
 			 * But, the vector may be very large. We should scale it down a bit.
 			 * Remember to scale uniformly!
@@ -105,7 +105,7 @@ class BoidCanvas extends JComponent {
 		centerX /= boids.size();
 		centerY /= boids.size();
 		
-		System.out.println("Swarm center at " + centerX + " " + centerY);		
+		//System.out.println("Swarm center at " + centerX + " " + centerY);		
 		int[] center = {centerX, centerY};
 		return center;
 	}
@@ -151,6 +151,8 @@ class BoidCanvas extends JComponent {
 		for (Boid d : Neighborhood) {
 			neighborhoodDX += d.movementVector[0];
 			neighborhoodDY += d.movementVector[1];
+			if(neighborhoodDX<0 || neighborhoodDY<0)
+				System.out.println("a neighbor tried to move back");
 		}
 
 		neighborhoodDX /= Neighborhood.size();
@@ -181,6 +183,9 @@ class BoidCanvas extends JComponent {
 				b.x += b.movementVector[0];
 				b.y += b.movementVector[1];
 				
+				if(b.movementVector[0] <0 || b.movementVector[1] <0)
+					System.err.println("Someone tried to move back!");
+				
 				if(b.x < 1)
 					b.x = 1;
 				else if(b.x > this.getWidth()-1)
@@ -192,7 +197,7 @@ class BoidCanvas extends JComponent {
 				
 			}
 
-			System.out.println(boids.get(0).x + " " + boids.get(0).y);
+			//System.out.println(boids.get(0).x + " " + boids.get(0).y);
 			repaint();
 			Thread.sleep(100);
 		}
