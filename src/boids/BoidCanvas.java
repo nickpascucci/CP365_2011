@@ -18,9 +18,9 @@ import javax.swing.JComponent;
 @SuppressWarnings("serial")
 class BoidCanvas extends JComponent implements MouseMotionListener{
 	final static float MAX_SPEED = 10;
-	final static int NEIGHBOR_DISTANCE = 300;
+	final static int NEIGHBOR_DISTANCE = 500;
 	int CENTER_WEIGHT = 6;
-	int AVOID_WEIGHT = 9;
+	int AVOID_WEIGHT = 10;
 	int MATCH_SPEED_WEIGHT = 2;
 	int MOUSE_WEIGHT = 3;
 	int mouseX;

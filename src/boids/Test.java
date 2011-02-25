@@ -17,6 +17,6 @@ public class Test {
 		frame.add(can);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		can.run(75);
+		can.run(350);
 	}
 }
