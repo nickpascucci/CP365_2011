@@ -16,9 +16,11 @@ import javax.swing.JComponent;
 @SuppressWarnings("serial")
 class BoidCanvas extends JComponent {
 	final static float MAX_SPEED = 10;
-	final static int NEIGHBOR_DISTANCE = 100;
+	final static int NEIGHBOR_DISTANCE = 300;
+	final static int RANDOMOSITY = 30;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
+	Random rand = new Random();
 
 	/**
 	 * Creates a new BoidCanvas object with defaults.
@@ -34,7 +36,7 @@ class BoidCanvas extends JComponent {
 		ArrayList<Boid> neighbors = new ArrayList<Boid>();
 
 		for (Boid d : boids) {
-			if (d.x - b.x + (d.y - b.y) < NEIGHBOR_DISTANCE)
+			if (Math.sqrt((d.x - b.x)*(d.x - b.x) + (d.y - b.y)*(d.y - b.y)) < NEIGHBOR_DISTANCE)
 				neighbors.add(d);
 		}
 
@@ -57,16 +59,14 @@ class BoidCanvas extends JComponent {
 			float[] cv = getCenterVector(newBoid);
 			float[] av = getAwayVector(newBoid);
 			float[] ms = getMatchSpeedVector(newBoid);
+			float[] rv = {(rand.nextFloat()*RANDOMOSITY)+1-RANDOMOSITY/2, (rand.nextFloat()*RANDOMOSITY)+1-RANDOMOSITY/2};
 			
 			// Combined vector is the sum of the contributing vectors.
-			newBoid.movementVector[0] = cv[0] + av[0] + ms[0];
-			newBoid.movementVector[1] = cv[1] + av[1] + ms[1];
+			newBoid.movementVector[0] = cv[0] + av[0] + ms[0] + rv[0];
+			newBoid.movementVector[1] = cv[1] + av[1] + ms[1] + rv[1];
 
-			/*
-			 * But, the vector may be very large. We should scale it down a bit.
-			 * Remember to scale uniformly!
-			 */
 			newBoid.movementVector = toUnitVector(newBoid.movementVector);
+			
 			newBoid.movementVector[0] *= MAX_SPEED;
 			newBoid.movementVector[1] *= MAX_SPEED;
 		}
@@ -186,7 +186,6 @@ class BoidCanvas extends JComponent {
 	 * @throws InterruptedException
 	 */
 	public void run(int num_boids) throws InterruptedException {
-		Random rand = new Random();
 		for (int i = 0; i < num_boids; i++) {
 			boids.add(new Boid(rand.nextInt(this.getWidth()), rand.nextInt(this.getWidth()), SIZE));
 		}
