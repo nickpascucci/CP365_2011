@@ -1,6 +1,13 @@
+package boids;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * Provides an implementation of a basic boid.
+ * @author Matthew Polk
+ * @author Nick Pascucci
+ */
 
 public class Boid {
 	int x, y, size;

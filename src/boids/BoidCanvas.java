@@ -1,14 +1,17 @@
+package boids;
+
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.JComponent;
+
 /**
  * Provides a drawing surface for the boid flock.
  * @author Matthew Polk
  * @author Nick Pascucci
  */
 
+@SuppressWarnings("serial")
 class BoidCanvas extends JComponent{
 	final static int MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 100;
