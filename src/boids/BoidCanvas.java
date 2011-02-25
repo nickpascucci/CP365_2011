@@ -20,12 +20,12 @@ class BoidCanvas extends JComponent implements MouseMotionListener{
 	final static float MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 300;
 	int CENTER_WEIGHT = 6;
-	int AVOID_WEIGHT = 12;
-	int MATCH_SPEED_WEIGHT = 1;
-	int MOUSE_WEIGHT = 8;
+	int AVOID_WEIGHT = 9;
+	int MATCH_SPEED_WEIGHT = 2;
+	int MOUSE_WEIGHT = 3;
 	int mouseX;
 	int mouseY;
-	final static int RANDOMOSITY = 30;
+	final static int RANDOMOSITY = 50;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
 	Random rand = new Random();
