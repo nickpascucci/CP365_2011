@@ -2,6 +2,9 @@ package boids;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JComponent;
@@ -14,9 +17,15 @@ import javax.swing.JComponent;
  */
 
 @SuppressWarnings("serial")
-class BoidCanvas extends JComponent {
-	final static int MAX_SPEED = 10;
-	final static int NEIGHBOR_DISTANCE = 100;
+class BoidCanvas extends JComponent implements MouseMotionListener{
+	final static float MAX_SPEED = 10;
+	final static int NEIGHBOR_DISTANCE = 300;
+	int CENTER_WEIGHT = 4;
+	int AVOID_WEIGHT = 12;
+	int MATCH_SPEED_WEIGHT = 1;
+	int MOUSE_WEIGHT = 8;
+	int mouseX;
+	int mouseY;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
 
@@ -25,6 +34,9 @@ class BoidCanvas extends JComponent {
 	 */
 	public BoidCanvas() {
 		boids = new ArrayList<Boid>();
+		mouseX = this.getWidth()/2;
+		mouseY = this.getHeight()/2;
+		addMouseMotionListener(this);
 	}
 
 	/**
@@ -34,7 +46,7 @@ class BoidCanvas extends JComponent {
 		ArrayList<Boid> neighbors = new ArrayList<Boid>();
 
 		for (Boid d : boids) {
-			if (d.x - b.x + (d.y - b.y) < NEIGHBOR_DISTANCE)
+			if (Math.sqrt(Math.pow((d.x - b.x),2) + Math.pow((d.y - b.y),2)) < NEIGHBOR_DISTANCE)
 				neighbors.add(d);
 		}
 
@@ -54,24 +66,43 @@ class BoidCanvas extends JComponent {
 		}
 
 		for (Boid newBoid : newBoids) {
-			int[] cv = getCenterVector(newBoid);
-			int[] av = getAwayVector(newBoid);
-			int[] ms = getMatchSpeedVector(newBoid);
-			System.out.println("center "+cv[0]+" "+cv[1]+" avoid "+av[0]+" "+av[1]+" ms "+ms[0]+" "+ms[1]);
+			float[] cv = getCenterVector(newBoid);
+			float[] av = getAwayVector(newBoid);
+			float[] ms = getMatchSpeedVector(newBoid);
+			float[] fm = getMouseVector(newBoid);
+			
 			// Combined vector is the sum of the contributing vectors.
-			newBoid.movementVector[0] = cv[0] + av[0] + ms[0];
-			newBoid.movementVector[1] = cv[1] + av[1] + ms[1];
-			System.out.println("move "+newBoid.movementVector[0]+" "+newBoid.movementVector[1]);
+			newBoid.movementVector[0] = CENTER_WEIGHT * cv[0] + AVOID_WEIGHT * av[0] + 
+				MATCH_SPEED_WEIGHT * ms[0] + MOUSE_WEIGHT * fm[0];
+			newBoid.movementVector[1] = CENTER_WEIGHT * cv[1] + AVOID_WEIGHT * av[1] + 
+				MATCH_SPEED_WEIGHT * ms[1] + MOUSE_WEIGHT * fm[1];
 			/*
 			 * But, the vector may be very large. We should scale it down a bit.
 			 * Remember to scale uniformly!
 			 */
-			newBoid.movementVector[0] /= 10;
-			newBoid.movementVector[1] /= 10;
+			newBoid.movementVector = toUnitVector(newBoid.movementVector);
+			newBoid.movementVector[0] *= MAX_SPEED;
+			newBoid.movementVector[1] *= MAX_SPEED;
 		}
 		boids = newBoids;
 	}
 
+	/*
+	 * Converts a vector to a unit vector.
+	 */
+	private float[] toUnitVector(float[] vector){
+		float x = (float) vector[0];
+		float y = (float) vector[1];
+		
+		//Loses some precision here.
+		float magnitude = (float) Math.sqrt(x*x + y*y);
+		float newX = (float) x/magnitude;
+		float newY = (float) y/magnitude;
+		
+		float[] newVector = {newX, newY};
+		return newVector;
+	}
+	
 	/**
 	 * Generates the vector to the center of the flock.
 	 * 
@@ -79,11 +110,11 @@ class BoidCanvas extends JComponent {
 	 *            The boid who is the origin of the vector.
 	 * @return An int array representing the x,y unit vectors.
 	 */
-	public int[] getCenterVector(Boid currentBoid) {
+	public float[] getCenterVector(Boid currentBoid) {
 		
 		int centerX = getSwarmCenter()[0];
 		int centerY = getSwarmCenter()[1];
-		int[] centerVec = {centerX - currentBoid.x, centerY - currentBoid.y};
+		float[] centerVec = {centerX - currentBoid.x, centerY - currentBoid.y};
 		return centerVec;
 	}
 
@@ -116,8 +147,8 @@ class BoidCanvas extends JComponent {
 	 * @param b
 	 * @return
 	 */
-	public int[] getAwayVector(Boid b) {
-		int[] awayVec = new int[2];
+	public float[] getAwayVector(Boid b) {
+		float[] awayVec = new float[2];
 
 		ArrayList<Boid> Neighborhood = getNearbyBoids(b);
 		int Neighborhood_x = 0;
@@ -142,8 +173,8 @@ class BoidCanvas extends JComponent {
 	 * @param b
 	 * @return
 	 */
-	public int[] getMatchSpeedVector(Boid b) {
-		int[] matchVec = new int[2];
+	public float[] getMatchSpeedVector(Boid b) {
+		float[] matchVec = new float[2];
 		ArrayList<Boid> Neighborhood = getNearbyBoids(b);
 
 		int neighborhoodDX = 0;
@@ -151,8 +182,6 @@ class BoidCanvas extends JComponent {
 		for (Boid d : Neighborhood) {
 			neighborhoodDX += d.movementVector[0];
 			neighborhoodDY += d.movementVector[1];
-			if(neighborhoodDX<0 || neighborhoodDY<0)
-				System.out.println("a neighbor tried to move back");
 		}
 
 		neighborhoodDX /= Neighborhood.size();
@@ -162,6 +191,11 @@ class BoidCanvas extends JComponent {
 		matchVec[1] = neighborhoodDY - b.movementVector[1];
 
 		return matchVec;
+	}
+	
+	public float[] getMouseVector(Boid b){
+		float[] ans = {(mouseX - b.x), (mouseY - b.y)};
+		return ans;
 	}
 
 	/**
@@ -183,15 +217,12 @@ class BoidCanvas extends JComponent {
 				b.x += b.movementVector[0];
 				b.y += b.movementVector[1];
 				
-				if(b.movementVector[0] <0 || b.movementVector[1] <0)
-					System.err.println("Someone tried to move back!");
-				
-				if(b.x < 1)
-					b.x = 1;
+				if(b.x < 0)
+					b.x = 0;
 				else if(b.x > this.getWidth()-1)
 					b.x = this.getWidth()-1;
-				if(b.y < 1)
-					b.y = 1;
+				if(b.y < 0)
+					b.y = 0;
 				else if(b.y > this.getHeight()-1)
 					b.y = this.getHeight()-1;
 				
@@ -214,4 +245,16 @@ class BoidCanvas extends JComponent {
 		g.setColor(Color.RED);
         g.fillRect(getSwarmCenter()[0], getSwarmCenter()[1], 4, 4);
 	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+		
+	}
+
+	
 }
