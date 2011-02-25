@@ -15,7 +15,7 @@ import javax.swing.JComponent;
 
 @SuppressWarnings("serial")
 class BoidCanvas extends JComponent {
-	final static int MAX_SPEED = 10;
+	final static float MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 100;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
@@ -54,9 +54,9 @@ class BoidCanvas extends JComponent {
 		}
 
 		for (Boid newBoid : newBoids) {
-			int[] cv = getCenterVector(newBoid);
-			int[] av = getAwayVector(newBoid);
-			int[] ms = getMatchSpeedVector(newBoid);
+			float[] cv = getCenterVector(newBoid);
+			float[] av = getAwayVector(newBoid);
+			float[] ms = getMatchSpeedVector(newBoid);
 			
 			// Combined vector is the sum of the contributing vectors.
 			newBoid.movementVector[0] = cv[0] + av[0] + ms[0];
@@ -66,8 +66,9 @@ class BoidCanvas extends JComponent {
 			 * But, the vector may be very large. We should scale it down a bit.
 			 * Remember to scale uniformly!
 			 */
-			newBoid.movementVector[0] /= 10;
-			newBoid.movementVector[1] /= 10;
+			newBoid.movementVector = toUnitVector(newBoid.movementVector);
+			newBoid.movementVector[0] *= MAX_SPEED;
+			newBoid.movementVector[1] *= MAX_SPEED;
 		}
 		boids = newBoids;
 	}
@@ -75,7 +76,7 @@ class BoidCanvas extends JComponent {
 	/*
 	 * Converts a vector to a unit vector.
 	 */
-	private float[] toUnitVector(int[] vector){
+	private float[] toUnitVector(float[] vector){
 		float x = (float) vector[0];
 		float y = (float) vector[1];
 		
@@ -84,7 +85,7 @@ class BoidCanvas extends JComponent {
 		float newX = (float) x/magnitude;
 		float newY = (float) y/magnitude;
 		
-		float[] newVector = {};
+		float[] newVector = {newX, newY};
 		return newVector;
 	}
 	
@@ -95,11 +96,11 @@ class BoidCanvas extends JComponent {
 	 *            The boid who is the origin of the vector.
 	 * @return An int array representing the x,y unit vectors.
 	 */
-	public int[] getCenterVector(Boid currentBoid) {
+	public float[] getCenterVector(Boid currentBoid) {
 		
 		int centerX = getSwarmCenter()[0];
 		int centerY = getSwarmCenter()[1];
-		int[] centerVec = {centerX - currentBoid.x, centerY - currentBoid.y};
+		float[] centerVec = {centerX - currentBoid.x, centerY - currentBoid.y};
 		return centerVec;
 	}
 
@@ -132,8 +133,8 @@ class BoidCanvas extends JComponent {
 	 * @param b
 	 * @return
 	 */
-	public int[] getAwayVector(Boid b) {
-		int[] awayVec = new int[2];
+	public float[] getAwayVector(Boid b) {
+		float[] awayVec = new float[2];
 
 		ArrayList<Boid> Neighborhood = getNearbyBoids(b);
 		int Neighborhood_x = 0;
@@ -158,8 +159,8 @@ class BoidCanvas extends JComponent {
 	 * @param b
 	 * @return
 	 */
-	public int[] getMatchSpeedVector(Boid b) {
-		int[] matchVec = new int[2];
+	public float[] getMatchSpeedVector(Boid b) {
+		float[] matchVec = new float[2];
 		ArrayList<Boid> Neighborhood = getNearbyBoids(b);
 
 		int neighborhoodDX = 0;

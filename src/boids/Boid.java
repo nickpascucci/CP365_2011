@@ -11,7 +11,7 @@ import java.awt.Graphics;
 
 public class Boid {
 	int x, y, size;
-	int[] movementVector;
+	float[] movementVector;
 	Color color;
 	
 	/**
@@ -24,7 +24,7 @@ public class Boid {
 		x = _x;
 		y = _y;
 		size = _size;
-		movementVector = new int[2];
+		movementVector = new float[2];
 		movementVector[0] = 0;
 		movementVector[1] = 1;
 	}
