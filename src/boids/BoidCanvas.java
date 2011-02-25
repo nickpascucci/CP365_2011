@@ -74,6 +74,19 @@ class BoidCanvas extends JComponent {
 		boids = newBoids;
 	}
 
+	/*
+	 * Converts a vector to a unit vector.
+	 */
+	private int[] toUnitVector(int[] vector){
+		int x = vector[0];
+		int y = vector[1];
+		
+		
+		
+		int[] newVector = {};
+		return newVector;
+	}
+	
 	/**
 	 * Generates the vector to the center of the flock.
 	 * 
