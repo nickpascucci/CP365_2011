@@ -2,6 +2,8 @@ package boids;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JComponent;
@@ -12,12 +14,17 @@ import javax.swing.JComponent;
  * @author Matthew Polk
  * @author Nick Pascucci
  */
-
 @SuppressWarnings("serial")
-class BoidCanvas extends JComponent {
+class BoidCanvas extends JComponent implements MouseMotionListener{
 	final static float MAX_SPEED = 10;
-	final static int NEIGHBOR_DISTANCE = 300;
-	final static int RANDOMOSITY = 30;
+	final static int NEIGHBOR_DISTANCE = 500;
+	int CENTER_WEIGHT = 6;
+	int AVOID_WEIGHT = 10;
+	int MATCH_SPEED_WEIGHT = 2;
+	int MOUSE_WEIGHT = 3;
+	int mouseX;
+	int mouseY;
+	final static int RANDOMOSITY = 50;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
 	Random rand = new Random();
@@ -27,6 +34,9 @@ class BoidCanvas extends JComponent {
 	 */
 	public BoidCanvas() {
 		boids = new ArrayList<Boid>();
+		mouseX = this.getWidth()/2;
+		mouseY = this.getHeight()/2;
+		addMouseMotionListener(this);
 	}
 
 	/**
@@ -60,13 +70,17 @@ class BoidCanvas extends JComponent {
 			float[] av = getAwayVector(newBoid);
 			float[] ms = getMatchSpeedVector(newBoid);
 			float[] rv = {(rand.nextFloat()*RANDOMOSITY)+1-RANDOMOSITY/2, (rand.nextFloat()*RANDOMOSITY)+1-RANDOMOSITY/2};
-			
-			// Combined vector is the sum of the contributing vectors.
-			newBoid.movementVector[0] = cv[0] + av[0] + ms[0] + rv[0];
-			newBoid.movementVector[1] = cv[1] + av[1] + ms[1] + rv[1];
+			float[] fm = getMouseVector(newBoid);
 
+			newBoid.movementVector[0] = CENTER_WEIGHT * cv[0] + AVOID_WEIGHT * av[0] + 
+				MATCH_SPEED_WEIGHT * ms[0] + MOUSE_WEIGHT * fm[0] + rv[0];
+			newBoid.movementVector[1] = CENTER_WEIGHT * cv[1] + AVOID_WEIGHT * av[1] + 
+				MATCH_SPEED_WEIGHT * ms[1] + MOUSE_WEIGHT * fm[1] + rv[0];
+			/*
+			 * But, the vector may be very large. We should scale it down a bit.
+			 * Remember to scale uniformly!
+			 */
 			newBoid.movementVector = toUnitVector(newBoid.movementVector);
-			
 			newBoid.movementVector[0] *= MAX_SPEED;
 			newBoid.movementVector[1] *= MAX_SPEED;
 		}
@@ -122,7 +136,7 @@ class BoidCanvas extends JComponent {
 		centerX /= boids.size();
 		centerY /= boids.size();
 		
-		System.out.println("Swarm center at " + centerX + " " + centerY);		
+		//System.out.println("Swarm center at " + centerX + " " + centerY);		
 		int[] center = {centerX, centerY};
 		return center;
 	}
@@ -178,6 +192,11 @@ class BoidCanvas extends JComponent {
 
 		return matchVec;
 	}
+	
+	public float[] getMouseVector(Boid b){
+		float[] ans = {(mouseX - b.x), (mouseY - b.y)};
+		return ans;
+	}
 
 	/**
 	 * Runs the simulation.
@@ -197,18 +216,18 @@ class BoidCanvas extends JComponent {
 				b.x += b.movementVector[0];
 				b.y += b.movementVector[1];
 				
-				if(b.x < 1)
-					b.x = 1;
+				if(b.x < 0)
+					b.x = 0;
 				else if(b.x > this.getWidth()-1)
 					b.x = this.getWidth()-1;
-				if(b.y < 1)
-					b.y = 1;
+				if(b.y < 0)
+					b.y = 0;
 				else if(b.y > this.getHeight()-1)
 					b.y = this.getHeight()-1;
 				
 			}
 
-			System.out.println(boids.get(0).x + " " + boids.get(0).y);
+			//System.out.println(boids.get(0).x + " " + boids.get(0).y);
 			repaint();
 			Thread.sleep(100);
 		}
@@ -224,5 +243,15 @@ class BoidCanvas extends JComponent {
 		}
 		g.setColor(Color.RED);
         g.fillRect(getSwarmCenter()[0], getSwarmCenter()[1], 4, 4);
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+		
 	}
 }
