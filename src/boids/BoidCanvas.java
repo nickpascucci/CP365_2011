@@ -18,8 +18,6 @@ class BoidCanvas extends JComponent {
 	final static int MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 100;
 	int SIZE = 5;
-	int WIDTH = 500;
-	int HEIGHT = 400;
 	ArrayList<Boid> boids;
 
 	/**
@@ -173,7 +171,7 @@ class BoidCanvas extends JComponent {
 	public void run(int num_boids) throws InterruptedException {
 		Random rand = new Random();
 		for (int i = 0; i < num_boids; i++) {
-			boids.add(new Boid(rand.nextInt(WIDTH), rand.nextInt(HEIGHT), SIZE));
+			boids.add(new Boid(rand.nextInt(this.getWidth()), rand.nextInt(this.getWidth()), SIZE));
 		}
 
 		while (true) {
@@ -182,6 +180,16 @@ class BoidCanvas extends JComponent {
 			for (Boid b : boids) {
 				b.x += b.movementVector[0];
 				b.y += b.movementVector[1];
+				
+				if(b.x < 1)
+					b.x = 1;
+				else if(b.x > this.getWidth()-1)
+					b.x = this.getWidth()-1;
+				if(b.y < 1)
+					b.y = 1;
+				else if(b.y > this.getHeight()-1)
+					b.y = this.getHeight()-1;
+				
 			}
 
 			System.out.println(boids.get(0).x + " " + boids.get(0).y);
