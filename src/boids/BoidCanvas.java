@@ -75,13 +75,16 @@ class BoidCanvas extends JComponent {
 	/*
 	 * Converts a vector to a unit vector.
 	 */
-	private int[] toUnitVector(int[] vector){
-		int x = vector[0];
-		int y = vector[1];
+	private float[] toUnitVector(int[] vector){
+		float x = (float) vector[0];
+		float y = (float) vector[1];
 		
+		//Loses some precision here.
+		float magnitude = (float) Math.sqrt(x*x + y*y);
+		float newX = (float) x/magnitude;
+		float newY = (float) y/magnitude;
 		
-		
-		int[] newVector = {};
+		float[] newVector = {};
 		return newVector;
 	}
 	
