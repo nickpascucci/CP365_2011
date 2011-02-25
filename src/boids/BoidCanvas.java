@@ -3,7 +3,6 @@ package boids;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,14 +19,16 @@ import javax.swing.JComponent;
 class BoidCanvas extends JComponent implements MouseMotionListener{
 	final static float MAX_SPEED = 10;
 	final static int NEIGHBOR_DISTANCE = 300;
-	int CENTER_WEIGHT = 4;
+	int CENTER_WEIGHT = 6;
 	int AVOID_WEIGHT = 12;
 	int MATCH_SPEED_WEIGHT = 1;
 	int MOUSE_WEIGHT = 8;
 	int mouseX;
 	int mouseY;
+	final static int RANDOMOSITY = 30;
 	int SIZE = 5;
 	ArrayList<Boid> boids;
+	Random rand = new Random();
 
 	/**
 	 * Creates a new BoidCanvas object with defaults.
@@ -46,7 +47,7 @@ class BoidCanvas extends JComponent implements MouseMotionListener{
 		ArrayList<Boid> neighbors = new ArrayList<Boid>();
 
 		for (Boid d : boids) {
-			if (Math.sqrt(Math.pow((d.x - b.x),2) + Math.pow((d.y - b.y),2)) < NEIGHBOR_DISTANCE)
+			if (Math.sqrt((d.x - b.x)*(d.x - b.x) + (d.y - b.y)*(d.y - b.y)) < NEIGHBOR_DISTANCE)
 				neighbors.add(d);
 		}
 
@@ -69,18 +70,19 @@ class BoidCanvas extends JComponent implements MouseMotionListener{
 			float[] cv = getCenterVector(newBoid);
 			float[] av = getAwayVector(newBoid);
 			float[] ms = getMatchSpeedVector(newBoid);
+			float[] rv = {(rand.nextFloat()*RANDOMOSITY)+1-RANDOMOSITY/2, (rand.nextFloat()*RANDOMOSITY)+1-RANDOMOSITY/2};
 			float[] fm = getMouseVector(newBoid);
-			
-			// Combined vector is the sum of the contributing vectors.
+
 			newBoid.movementVector[0] = CENTER_WEIGHT * cv[0] + AVOID_WEIGHT * av[0] + 
-				MATCH_SPEED_WEIGHT * ms[0] + MOUSE_WEIGHT * fm[0];
+				MATCH_SPEED_WEIGHT * ms[0] + MOUSE_WEIGHT * fm[0] + rv[0];
 			newBoid.movementVector[1] = CENTER_WEIGHT * cv[1] + AVOID_WEIGHT * av[1] + 
-				MATCH_SPEED_WEIGHT * ms[1] + MOUSE_WEIGHT * fm[1];
+				MATCH_SPEED_WEIGHT * ms[1] + MOUSE_WEIGHT * fm[1] + rv[0];
 			/*
 			 * But, the vector may be very large. We should scale it down a bit.
 			 * Remember to scale uniformly!
 			 */
 			newBoid.movementVector = toUnitVector(newBoid.movementVector);
+
 			newBoid.movementVector[0] *= MAX_SPEED;
 			newBoid.movementVector[1] *= MAX_SPEED;
 		}
@@ -205,7 +207,6 @@ class BoidCanvas extends JComponent implements MouseMotionListener{
 	 * @throws InterruptedException
 	 */
 	public void run(int num_boids) throws InterruptedException {
-		Random rand = new Random();
 		for (int i = 0; i < num_boids; i++) {
 			boids.add(new Boid(rand.nextInt(this.getWidth()), rand.nextInt(this.getWidth()), SIZE));
 		}
@@ -255,6 +256,4 @@ class BoidCanvas extends JComponent implements MouseMotionListener{
 		mouseY = e.getY();
 		
 	}
-
-	
 }
