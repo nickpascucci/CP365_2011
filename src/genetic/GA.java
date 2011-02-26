@@ -15,15 +15,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 /**
- * Provides a representation of polygons storing both shape and color.
- * Quite a bit of this code was written by our instructor, Matthew
- * Whitehead. We adapted it to solve the problem at hand and implemented
- * some missing methods.
+ * Provides a representation of polygons storing both shape and color. Quite a
+ * bit of this code was written by our instructor, Matthew Whitehead. We adapted
+ * it to solve the problem at hand and implemented some missing methods.
  * 
  * @author Matthew Whitehead
  * @author Nick Pascucci
@@ -66,8 +66,7 @@ class MyPolygon {
 }
 
 /**
- * Stores a generated solution to the problem, 
- * also known as a chromosome.
+ * Stores a generated solution to the problem, also known as a chromosome.
  */
 class GASolution {
 
@@ -173,7 +172,8 @@ public class GA extends JComponent {
 	int MAX_POLYGONS = 10;
 	int MAX_SAMPLES = 1000;
 	int COLOR_MOBILITY = 40; // Be sure only to use even numbers here
-	int VERTEX_MOBILITY = 40; // Otherwise, the polys/colors will shift to one side
+	int VERTEX_MOBILITY = 40; // Otherwise, the polys/colors will shift to one
+								// side
 	int ORGANISMS = 100;
 
 	/*
@@ -186,8 +186,7 @@ public class GA extends JComponent {
 	 */
 
 	/**
-	 * Attaches a new genetic algorithm instance to a canvas and target
-	 * image.
+	 * Attaches a new genetic algorithm instance to a canvas and target image.
 	 */
 	public GA(GACanvas _canvas, BufferedImage _realPicture) {
 
@@ -202,6 +201,7 @@ public class GA extends JComponent {
 
 	/**
 	 * Performs the grunt work in running the simulation.
+	 * 
 	 * @param gens
 	 */
 	private void evolve(int gens) {
@@ -254,10 +254,11 @@ public class GA extends JComponent {
 		// which one tips it over the rand
 		int target = 0;
 		while (target < avgFitness)
-			target = rand.nextInt(totalFitness); // Only select organisms better than avg
+			target = rand.nextInt(totalFitness); // Only select organisms better
+													// than avg
 
 		int i = 0, runningSum = 0;
-		while (runningSum < target) { 
+		while (runningSum < target) {
 			runningSum += pop.get(i++).fitness;
 		}
 		return pop.get(i - 1);
@@ -385,6 +386,7 @@ public class GA extends JComponent {
 
 	/**
 	 * Generates a random chromosome.
+	 * 
 	 * @return
 	 */
 	private GASolution createRandomChromosome() {
@@ -418,6 +420,7 @@ public class GA extends JComponent {
 
 	/**
 	 * Main method.
+	 * 
 	 * @param args
 	 * @throws IOException
 	 */
