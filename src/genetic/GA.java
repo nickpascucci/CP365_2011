@@ -21,6 +21,9 @@ import javax.swing.JFrame;
 
 /**
  * Provides a representation of polygons storing both shape and color.
+ * Quite a bit of this code was written by our instructor, Matthew
+ * Whitehead. We adapted it to solve the problem at hand and implemented
+ * some missing methods.
  * 
  * @author Matthew Whitehead
  * @author Nick Pascucci
