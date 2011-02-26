@@ -123,6 +123,7 @@ class GASolution {
 /**
  * Provides drawing capabilities to display solutions.
  */
+@SuppressWarnings("serial")
 class GACanvas extends JComponent {
 
 	int width, height;
@@ -156,6 +157,7 @@ class GACanvas extends JComponent {
 /**
  * Implements the actual genetic algorithm.
  */
+@SuppressWarnings("serial")
 public class GA extends JComponent {
 
 	GACanvas canvas;
