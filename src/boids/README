@@ -1,0 +1,15 @@
+Boids Readme
+
+The files in this directory are an implementation of 
+a simple emergent behavior algorithm. Running Test
+will put up a window with a swarm of little 'boids',
+each of which follows three simple rules:
+
+	1. Move towards the center of the swarm
+	2. Match speed and direction with close neighbors
+	3. Maintain a separation from your neighbors
+	
+Combined with some randomization of their velocities and
+a simple mouse following implementation, the boids will
+swarm towards the mouse. The little red one in the
+middle represents the center of the swarm.

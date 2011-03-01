@@ -1,0 +1,7 @@
+Knowledgebase Readme
+
+This folder contains a simple prolog program
+which is able to diagnose some specific symptoms
+of four diseases. It isn't anything too interesting,
+but it does illustrate Prolog's ability to 
+perform inference.

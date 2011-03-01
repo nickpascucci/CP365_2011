@@ -1,0 +1,15 @@
+Genetic Algorithm Readme
+
+This file demonstrates a simple genetic algorithm.
+It creates a population of randomly generated 
+"chromosomes", each of which represents an approximation
+of the target file (test.jpg). The algorithm will 
+perform a fitness evaluation on each chromosome, and
+meld aspects of the fittest ones together ("mating" them)
+and then randomly vary aspects of others based on a 
+statistical distribution (mutation). These new chromosomes
+will form the next generation, which will repeat the process;
+as the algorithm proceeds, it will bear better and better
+approximations to the target image. This particular
+implementation is probably not the best; but it works fairly
+well at around 10,000 generations.
