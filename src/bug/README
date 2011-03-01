@@ -1,0 +1,16 @@
+Bug Readme
+
+The files in this dir are based on a simple bug-style
+navigation algorithm for robots. The robot has one
+bump sensor, which fires whenever the robot comes into
+contact with an obstacle. It does not provide direction
+information.
+
+Running these files requires that the user have PyGame
+installed (pygame.org). Extract the .zip into a directory,
+put bug1.py and bug2.py in there, and change the one you
+want to run to be MyBug.py. Run the script with
+
+python bugworld.py world1.dat
+
+and life should be good.
