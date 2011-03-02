@@ -2,6 +2,11 @@
  Analyzer for text files
  Tracks the occurrences of words in blogs and splogs
  By Matt Polk and Nick Pascucci
+ - Run 'sort' before this script to generate the list of files
+ - This script doesn't really classify the blogs/splogs well;
+   it chokes on a division by zero. My guess? We're running off
+   the bottom of the float representation in multiplying
+   our rhs in get_spam_probability_file and its counterpart.
 '''
 import operator
 
@@ -10,13 +15,24 @@ import operator
  Takes a filename and dictionary of splogWords
  Returns a normalized tuple (prob_is_spam, prob_is_ham)
 '''
-def evalute_file(filename, prob_spam, splogWords, blogWords):
-	probFileIsSpam = get_spam_probability_file(filename, prob_spam, splogWords)
-	probFileIsHam = get_ham_probability_file(filename, 1-prob_spam, blogWords)
+def evaluate_file(filename, prob_spam, splogWords, blogWords):
+	probFileIsSpam = float(get_spam_probability_file(filename, prob_spam, splogWords))
+	probFileIsHam = float(get_ham_probability_file(filename, 1-prob_spam, blogWords))
+	print "Probability that", filename, "is spam:", probFileIsSpam, "probability is ham:", probFileIsHam
 	z = probFileIsSpam + probFileIsHam
 	probFileIsSpam /= z
 	probFileIsHam /= z
 	return (probFileIsSpam, probFileIsHam)
+
+'''
+ Checks to see if a file looks like spam.
+'''
+def looks_like_spam(filename, prob_spam, splog_words, blog_words):
+	probs = evaluate_file(filename, prob_spam, splog_words, blog_words)
+	if probs[0] > probs[1]:
+		return True
+	else:
+		return False
 
 '''
  Calculates the probability that the file is spam.
@@ -26,7 +42,8 @@ def get_spam_probability_file(filename, prob_spam, splogWords):
 	fileWords = get_words(filename)
 	rhs = prob_spam
 	for word in fileWords:
-		rhs *= splogWords[word]
+		if word in splogWords and splogWords[word] != 0:
+			rhs *= splogWords[word]
 	return rhs
 
 '''
@@ -37,7 +54,8 @@ def get_ham_probability_file(filename, prob_ham, blogWords):
 	fileWords = get_words(filename)
 	rhs = prob_ham
 	for word in fileWords:
-		rhs *= blogWords[word]
+		if word in blogWords and blogWords[word] != 0:
+			rhs *= blogWords[word]
 	return rhs
 
 '''
@@ -48,7 +66,7 @@ def get_spam_probability_word(word, numSplogs, numBlogs, splogWords, blogWords):
 	numSplogs = float(numSplogs)
 	numBlogs = float(numBlogs)
 	if not word in blogWords:
-		blogWords[word] = 0.0
+		return 1
 	numerator = splogWords[word]*(numSplogs/(numSplogs+numBlogs))
 	denominator = numerator + blogWords[word]*(numBlogs/(numBlogs+numSplogs))
 	return numerator/denominator
@@ -131,14 +149,12 @@ def main():
 	print "Splogs had a total of ", len(splogWords), " unique words."
 	print "Blogs had a total of ", len(blogWords), " unique words."
 
-	# Calculate ratios of occurences of words
+	# Calculate ratios of occurrences of words
 	for word in blogWords:
 		blogWords[word] /= float(len(blogs))
 
 	for word in splogWords:
 		splogWords[word] /= float(len(splogs))
-
-
 
 	spammiestWords = {}
 	# Finds the spammiest words. Uses get_spam_probability_word:
@@ -152,6 +168,27 @@ def main():
 	print "Most spammy words:"
 	for i in range(0, 25):
 		print '{0}: {1}'.format(i+1, sorted_spam_words[i])
+
+#The below is commented out because it kills the script.
+'''
+	# def looks_like_spam(filename, prob_spam, splog_words, blog_words):
+	correct_spam = 0
+	incorrect_spam = 0	
+	prob_spam = float(len(splogs))/(float(len(splogs))+float(len(blogs)))
+	print "Probability a file is spam:", prob_spam
+	for target in splogs:
+		if looks_like_spam(target, prob_spam, splogWords, blogWords):
+			correct_spam += 1
+		else:
+			incorrect_spam += 1
+
+	for target in blogs:
+			if not looks_like_spam(target, prob_spam, splogWords, blogWords):
+				correct_spam += 1
+			else:
+				incorrect_spam += 1
+	print "Tagged", correct_spam + incorrect_spam, "pages as spam.", correct_spam, "pages were correct, and", incorrect_spam, "pages were incorrect."
+'''
 
 
 # Takes us to main if the file is executed directly
