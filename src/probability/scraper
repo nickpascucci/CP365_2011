@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#A simple script to scrape the text
+#out of a series of html files.
+
+for FILE in `ls *.html` 
+do
+	links -dump $FILE > text/$FILE.txt
+done

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#A stupid simple script to sort blogs from splogs using blogsplog.txt and sed
+
+cat blogsplog.txt | awk '{print $2 ".txt", $3}' > trimmed
